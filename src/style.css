@@ -1,0 +1,1618 @@
+/* =========================================
+   1. 変数定義 & ルート設定
+   ========================================= */
+:root {
+    --primary-color: #4a90e2;    /* 清潔感のあるブルー */
+    --secondary-color: #50e3c2;  /* アクセントのグリーン */
+    --bg-color: #f0f2f5;         /* 背景：落ち着いたグレー */
+    --text-color: #2c3e50;       /* 文字：深い濃紺 */
+    --white: #ffffff;
+    --vermilion: #e63946;        /* 朱色：強調用 */
+    --correct-green: #28a745;    /* 正解の緑 */
+    --wrong-red: #dc3545;        /* 不正解の赤 */
+    --border-light: #eef2f7;
+    --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================================
+   2. リセット & 基本スタイル
+   ========================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* メインコンテナ（アニメーションなし） */
+#toeic-word-book {
+    background: var(--white);
+    width: 100%;
+    max-width: 500px;
+    padding: 40px 30px;
+    border-radius: 24px;
+    box-shadow: var(--shadow-soft);
+    text-align: center; /* 基本は中央揃え */
+}
+
+/* クイズ・結果画面表示時の幅拡張 */
+#toeic-word-book:has(.quiz),
+#toeic-word-book:has(.results),
+#toeic-word-book:has(.long-quiz-container),
+#toeic-word-book:has(.finshedDisp) {
+    max-width: 900px;
+    padding: 50px 40px;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+/* =========================================
+   3. 共通コンポーネント（ボタン）
+   ========================================= */
+button {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 16px 24px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-color);
+    background-color: var(--white);
+    border: 2px solid var(--border-light);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background-color: #f8fbff;
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* 戻るボタン */
+.backBtn {
+    border: 1px solid #d1d5db;
+    color: #6b7280;
+    background-color: transparent;
+    margin: 50px auto 0;
+    font-weight: 500;
+    width: 260px;
+    border-radius: 30px;
+}
+
+.backBtn:hover {
+    background-color: #f3f4f6;
+    color: var(--text-color);
+    border-color: #9ca3af;
+}
+
+/* ログイン画面のコンテナ（ここが起点） */
+.login-container {
+    /* 他の画面に影響を与えないための設定 */
+    position: fixed; /* 画面に対して固定 */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #f0f4f8;
+
+    /* 中央寄せの設定 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    /* 念のため、他の要素より手前に来るように */
+    z-index: 1000;
+}
+
+/* ログイン画面の中のh1だけに限定 */
+.login-container h1 {
+    color: #2c3e50;
+    text-align: center;
+    font-size: 2rem;
+}
+
+/* ログインカード */
+.login {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    width: 90%;
+    max-width: 380px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* ログイン画面内のinputだけに限定 */
+.login .name-input,
+.login .email-input, 
+.login .password-input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    box-sizing: border-box; 
+}
+
+/* ログインボタン（ボタンもクラス名で指定） */
+.login .successBtn {
+    background-color: #5a67d8;
+    color: white;
+    width: 100%;
+    padding: 0.9rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.login .signUpBtn {
+    background-color: transparent;
+    color: #5a67d8;
+    border: 2px solid #5a67d8;
+    width: 100%;
+    padding: 0.9rem;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 0.8rem;
+}
+
+.error-message {
+    color: #cd1b1b;
+}
+
+.forgotPassword {
+    display: block;
+    margin-bottom: 15px;
+    color: #3574bd;
+}
+
+/* ボタンの親要素：横並びにして中央寄せ */
+.finalDecisions {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* ボタン同士の隙間 */
+    margin-top: 15px;
+}
+
+/* Yes/No ボタン共通：少し小さめでコンパクトに */
+.yesBtn, .noBtn {
+    padding: 8px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+/* Yes：赤系（警告色） */
+.yesBtn {
+    background-color: #ff4d4d;
+    color: white;
+}
+.yesBtn:hover {
+    background-color: #cc0000;
+}
+
+/* No：グレー系（落ち着いた色） */
+.noBtn {
+    background-color: #e0e0e0;
+    color: #333;
+}
+.noBtn:hover {
+    background-color: #bdbdbd;
+}
+
+/* =========================================
+   4. クイズプレイ画面 (Short)
+   ========================================= */
+.quiz {
+    position: relative;
+    padding-top: 50px;
+}
+
+.timer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1rem;
+    color: #94a3b8;
+    background: #f8f9fa;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+}
+
+.alert {
+    color: var(--wrong-red);
+    font-weight: bold;
+}
+
+.instruction {
+    font-size: 1.3rem;
+    color: var(--primary-color);
+    margin-bottom: 40px;
+    font-weight: 600;
+}
+
+.question-text {
+    font-size: 1.4rem;
+    font-weight: 400; 
+    margin-bottom: 50px;
+    word-break: break-word;
+    text-align: center;
+}
+
+/* 親コンテナ：中身を完全に中央へ */
+.quiz .options {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    /* 👈 子要素を中央に寄せる */
+    justify-content: center !important; 
+    /* 👈 複数行になった時も中央に寄せる */
+    align-content: center !important;   
+    gap: 16px !important;
+    margin: 0 auto 40px !important;    /* 👈 左右マージンをautoにして親自体を中央に */
+    width: 100% !important;
+}
+
+.quiz .optionBtn {
+    width: auto !important; 
+    flex: 0 1 auto !important;
+    margin-bottom: 0 !important; 
+    min-width: 160px !important;
+    padding: 12px 28px !important;
+    border-radius: 50px !important;
+    display: inline-block !important;
+    /* 👈 ボタン内の文字も中央に */
+    text-align: center !important;
+}
+
+.answerBtn {
+    display: block !important;
+    width: 240px !important;
+    margin: 30px auto 0 !important;
+}
+
+.optionBtn.onClicked {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+}
+
+.answerBtn {
+    display: block !important;
+    width: 240px;
+    margin: 30px auto 0;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 10px rgba(74, 144, 226, 0.2);
+}
+
+/* =========================================
+   5. 長文問題プレイ画面 (Long)
+   ========================================= */
+.long-quiz-container {
+    text-align: center;
+}
+
+.long-question-text {
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    line-height: 1.8 !important;
+    text-align: left !important; /* 長文読解のため左揃え */
+    padding: 30px !important;
+    background-color: #f9fbfc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    margin: 0 auto 40px !important;
+    max-width: 100% !important;
+}
+
+.allOptionsElm {
+    margin-top: 40px;
+}
+
+.AllOptions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: center !important; /* 横並び中央揃え */
+    gap: 12px !important;
+    margin-bottom: 20px !important;
+}
+
+.long-options-row {
+    display: inline-block !important;
+    width: 150px !important;
+    min-width: 100px !important;
+    padding: 10px 15px !important;
+    font-size: 0.95rem !important;
+    border-radius: 10px !important;
+}
+
+/* ShortとLong両方の選択済みスタイルを共通化 */
+.optionBtn.onClicked,
+.long-options-row.onClicked {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3) !important;
+}
+
+/* =========================================
+   6. 終了（Finish）画面
+   ========================================= */
+.finshedDisp {
+    padding: 40px 0;
+}
+
+.finshedDisp h1:last-of-type {
+    color: var(--primary-color);
+    margin-bottom: 40px;
+}
+
+.finishMessage {
+    font-size: 1.3rem;
+    color: #64748b;
+    margin-bottom: 15px;
+}
+
+.toResultMessage {
+    font-size: 1.3rem;
+    color: #64748b;
+    margin-bottom: 15px;
+}
+
+.toResultBtn {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 18px 60px;
+    font-size: 1.25rem;
+    border-radius: 50px;
+    width: auto;
+    margin-top: 20px;
+}
+
+/* =========================================
+   7. 結果画面 (Results) - 全体設計
+   ========================================= */
+.results {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* すべて中央へ */
+}
+
+.type-quizs {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    margin-bottom: 10px;
+}
+
+.score {
+    font-size: 1.2rem;
+    margin-bottom: 0px;
+    color: var(--text-color);
+}
+
+.result {
+    width: 100%;
+    margin-bottom: 100px;
+    padding-bottom: 50px;
+    border-bottom: 2px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* カード内要素中央揃え */
+    margin-bottom: 40px !important; /* 次の問題までの余白も少し詰める */
+    padding-bottom: 20px !important;
+}
+
+/* 結果画面の問題文 */
+.result .question-text,
+.result .long-question-text {
+    font-size: 1.3rem;
+    font-weight: 400;
+    margin-bottom: 30px;
+    text-align: center; /* 中央揃え */
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+/* オプションエリア（結果画面） */
+.optionsPart, 
+.optionsAndAnswersPart {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important; /* 子要素を中央へ */
+    width: 100% !important;
+    margin-bottom: 20px !important;
+}
+
+.options-label {
+    color: #94a3b8;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+    font-weight: bold;
+}
+
+.question-text,
+.long-question-text {
+    margin-top: 60px;
+}
+
+/* 結果画面の選択肢を横並び中央揃えにする */
+.options, 
+.long-optionsAndAnswer {
+    display: flex !important;
+    flex-direction: row !important;  /* 横並び */
+    flex-wrap: wrap !important;      /* 折り返し許可 */
+    justify-content: center !important; /* 中央に寄せる */
+    align-items: center !important;
+    gap: 10px 20px !important;       /* 縦10px、横20px。離れすぎないよう調整 */
+    width: auto !important;          /* 100%をやめて中身に合わせる */
+    max-width: 90% !important;       /* 親からはみ出さない */
+    margin: 10px auto !important;    /* 左右オートで中央配置 */
+    padding: 0 !important;
+    list-style: none !important;
+}
+
+.options, 
+.options-for-long {
+    margin: 0 !important;
+    padding: 5px 10px !important;
+    white-space: nowrap !important; /* 選択肢内での意図しない改行を防止 */
+    font-size: 1rem !important;
+    color: #555 !important;
+    display: inline-block !important; /* フレックスアイテムとして機能 */
+}
+
+.optionsPart > p:first-child {
+    font-weight: bold;
+    color: #94a3b8;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    width: 100%;
+    text-align: center;
+}
+
+/* 個別の選択肢項目のマージン調整 */
+.options li {
+    margin: 10px 0 !important;
+    display: inline-block;
+}
+
+/* =========================================
+   8. 正誤判定 & 解説 (中央揃え)
+   ========================================= */
+.check-box {
+    background-color: #f8f9fa; /* 指定のグレー背景 */
+    border-radius: 16px;
+    padding: 10px 25px;
+    margin: 0px auto;
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+    border: 1px solid #edf2f7;
+}
+
+.check-box p {
+    margin: 8px 0;
+    font-size: 1.1rem;
+    font-weight: 400; /* 太字解除 */
+}
+
+.translation {
+    margin: 10px auto;
+    margin-bottom: 20px;
+    max-width: 700px;
+    text-align: left;
+    background-color: #f8f9fa; /* 指定のグレー背景 */
+    border-radius: 16px;
+    border: 1px solid #edf2f7;       
+    padding: 20px;
+    background-color: #f8f8f8; 
+}
+
+.note {
+    margin: 25px auto;
+    margin-bottom: 0;
+    text-align: center;
+    display: block;
+}
+
+/* 正誤テキストの色 */
+.green { color: var(--correct-green) !important; font-weight: 700; }
+.red { color: var(--wrong-red) !important; font-weight: 700; }
+
+/* 解説テキスト (中央揃え) */
+.explanation-highlight {
+    color: #333;
+    line-height: 1.8;
+    font-size: 1.05rem;
+    max-width: 700px;
+    margin: 10px auto;
+    margin-bottom: 30px;
+    text-align: left;
+    background-color: #f8f9fa; /* 指定のグレー背景 */
+    border-radius: 16px;
+    border: 1px solid #edf2f7;       
+    padding: 20px;
+    background-color: #f8f8f8;
+}
+
+/* 指定箇所のみ朱色 */
+.vermilion {
+    color: var(--vermilion);
+}
+
+/* =========================================
+   9. 単語ライブラリ (中央揃え・単語帳風)
+   ========================================= */
+.library, .long-library {
+    width: 100%;
+    max-width: 700px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center; /* 中央揃え */
+    margin-top: 0px !important; /* libraryの上部余白をさらに詰め */
+}
+
+.libraryList, .long-libraryList {
+    margin-bottom: 30px;
+    padding-bottom: 25px;
+    border-bottom: 1px dashed #cbd5e1;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 子要素を中央へ */
+}
+
+.libraryList:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* 単語と訳の行 */
+.match, .long-match {
+    display: flex;
+    flex-direction: row;
+    justify-content: center; /* 中央揃え */
+    align-items: baseline;
+    gap: 15px;
+    margin-bottom: 12px;
+}
+
+.english, .long-english {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #3c83d4;
+}
+
+.japanese, .long-japanese {
+    font-size: 1rem;
+    color: #4a5568;
+}
+
+.brank {
+    margin-bottom: 30px;
+}
+
+.partOfSpeech {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* 正方形のサイズ調整 */
+    width: 1.8em;
+    height: 1.8em;
+    
+    /* 文字の調整 */
+    font-size: 0.65rem;      /* 日本語より一回り小さく */
+    font-weight: normal;
+    line-height: 1;
+    
+    /* 見た目の装飾 */
+    background-color: #e0e0e0; /* 薄い灰色 */
+    color: #444;              /* 文字色は少し濃いめのグレー */
+    border-radius: 4px;       /* 3〜4pxにすると「柔らかい正方形」になります */
+    
+    /* 配置の調整 */
+    margin-left: 8px;         /* 日本語の意味との間隔 */
+    vertical-align: middle;   /* テキストの高さに合わせる */
+}
+
+/* 例文セクション */
+.exampleSentence, .long-exampleSentence {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.englishES {
+    font-style: italic;
+    color: #2d3748;
+    margin-bottom: 8px;
+    font-size: 1rem;
+    max-width: 600px;
+}
+
+.japaneseES, .long-japaneseES {
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.blue {
+    color: #4a90e2;
+}
+
+.blankIndex {
+    display: inline-flex;      /* 数字を中央に配置するため */
+    justify-content: center;
+    align-items: center;
+    width: 1.3em;              /* 枠の幅 */
+    height: 1.2em;             /* 枠の高さ（幅と同じにして正方形にする） */
+    border: 1px solid #898989;    /* 線の太さと色 */
+    border-radius: 50%;        /* 角を丸めて正円にする */
+    margin-right: 5px;         /* 右側に少し余白 */
+    font-size: 0.9em;          /* 数字の大きさを微調整 */
+    vertical-align: middle;    /* 前後のテキストと高さを合わせる */
+    background-color: #fff;    /* 背景色（必要に応じて） */
+    color: #94a3b8;               /* 数字の色 */
+}
+
+/* =========================================
+   12. 設定画面 (Setting View)
+   ========================================= */
+.setting {
+    padding: 20px 0;
+}
+
+.setting h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: var(--text-color);
+    letter-spacing: 1px;
+}
+
+/* 設定アイテムのコンテナ */
+.setting-item {
+    background: #fcfdfe;
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* ラベルとボタンを左右に配置 */
+    transition: all 0.3s ease;
+}
+
+.setting-item:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    border-color: #d1d9e6;
+}
+
+/* 難易度ラベル（Normal, Hard...） */
+.time {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 0 !important; /* 余計な余白をカット */
+    flex: 1;
+    text-align: left;
+}
+
+/* 設定画面内の時間選択ボタン：基本状態 */
+.settingOptionBtn {
+    width: 200px;
+    margin-bottom: 0;
+    padding: 12px 15px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #27ae60; /* 文字色も緑に */
+    background-color: var(--white);
+    border-radius: 12px;
+    border: 2px solid #e8f5e9; /* 薄い緑の枠線 */
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ホバーしたとき：少し明るい緑に */
+.settingOptionBtn:hover {
+    background-color: #f1f9f4 !important; /* ごく薄い緑背景 */
+    border-color: #2ecc71 !important;     /* 枠線を少し明るく */
+    color: #27ae60 !important;
+    transform: translateY(-2px);
+}
+
+/* 押した（アクティブ）瞬間：少し沈む */
+.settingOptionBtn:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+/* 選択された（onClicked）とき：濃い緑で塗りつぶし */
+.setting .settingOptionBtn.onClicked {
+    background-color: #27ae60 !important;
+    color: white !important;
+    border-color: #27ae60 !important;
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3); /* 緑色の影 */
+}
+
+/* 決定ボタン (Set) も緑系に合わせる場合 */
+.settingBtn {
+    background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+}
+
+/* 決定ボタン (Set) */
+.setBtn {
+    margin-top: 40px;
+    width: 100%;
+    max-width: 300px;
+    background: linear-gradient(135deg, var(--primary-color), #357abd);
+    color: white;
+    border: none;
+    padding: 18px;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    box-shadow: 0 10px 20px rgba(74, 144, 226, 0.2);
+}
+
+.setBtn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 25px rgba(104, 226, 74, 0.182);
+    background: linear-gradient(135deg, #3574bd, var(--primary-color));
+}
+
+/* 究極の微調整：文字の太さを一律で制御 */
+p, div, span {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 背景の装飾（オプション：不要なら削除可能ですがUI向上のため） */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f0f2f5 100%);
+    z-index: -1;
+}
+
+/* 見開き専用：親要素を無視して広く使う */
+.pageLibrary {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    
+    /* 画面幅の90%〜95%くらいを使う設定 */
+    width: 90vw;
+    margin-left: calc(50% - 45vw); /* 中央揃えを維持しつつ外へ広げる */
+    
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+/* ページ自体の質感を中央パネルに合わせる */
+.pageLibrary .leftPage, 
+.pageLibrary .rightPage {
+    /* 真っ白ではなく、少し透けた白にする */
+    background: rgba(255, 255, 255, 0.4); 
+    
+    /* 背後の要素をぼかす（透けた感じが強まります） */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    /* 境界線を少しマイルドに */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px; /* 中央パネルの角丸に合わせる */
+    
+    /* 影も中央パネルのトーンに合わせる */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+
+    padding: 20px;
+    flex: 1;
+    min-width: 400px;
+}
+
+/* ページの中身（左右共通） */
+.pageLibrary .leftPage, 
+.pageLibrary .rightPage {
+    flex: 1;
+    min-width: 400px; /* 狭くなりすぎないように制限 */
+    /* ここに背景や余白の既存デザインが当たっているはず */
+}
+
+/* ページ遷移ボタンのコンテナを親から外す */
+.changePageBtns {
+    display: flex;
+    justify-content: center;
+    gap: 80px; /* 左右のページの下に来るように調整 */
+    
+    /* 親要素を無視して広げる魔法のセット */
+    width: 90vw;
+    margin-left: calc(50% - 45vw);
+    
+    margin-top: 30px;
+    position: relative; /* z-indexなどが必要な場合のため */
+}
+
+.libraryLevel {
+    margin-top: 20px;
+}
+
+/* 「Back to LevelSelect」ボタンも親から外す */
+.libraryBackBtn {
+    display: block;
+    margin: 40px auto 0; /* 上に余白、左右中央 */
+    /* これも親要素の影響をリセットしたい場合 */
+    position: relative;
+    width: fit-content; /* 中身の幅に合わせる */
+    margin-bottom: 30px;
+}
+
+.prevPageBtn, .nextPageBtn {
+    display: flex;             /* フレックスボックスにする */
+    justify-content: center;   /* 左右中央 */
+    align-items: center;       /* 上下中央 */
+    
+    width: 180px;              /* 幅を固定すると左右で揃って綺麗です */
+    height: 50px;              /* 高さを指定 */
+    padding: 0;                /* 中身がズレないようパディングをリセット */
+    
+    /* 以前のスタイルを維持しつつ、文字の重なりを防ぐ */
+    line-height: 1;            
+    font-size: 1.05rem;
+}
+
+/* =========================================
+   libraryView専用：親要素のスタイルを完全に消去
+   ========================================= */
+
+/* 1. IDセレクタの優先度に勝つために、ID名で直接指定して背景を透明にする */
+body:has(.pageLibrary) #toeic-word-book {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    max-width: none !important; /* 幅の制限も解除 */
+    padding: 0 !important;      /* 余計な余白もカット */
+}
+
+/* 2. もし左右のページにまだ白い背景が残っているなら、ここで統一 */
+.pageLibrary .leftPage, 
+.pageLibrary .rightPage {
+    background: rgba(255, 255, 255, 0.4) !important; /* 透け感のある白 */
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+/* 3. 背景全体を body レベルで統一（以前のものを微調整） */
+body:has(.pageLibrary) {
+    background-color: var(--bg-color) !important;
+}
+
+/* 実績画面の親コンテナ：タイトルとコンテンツを中央寄せ */
+.achievement-page {
+    text-align: center;
+    padding: 20px;
+}
+
+/* 2つのグループ（ShortとLong）を横並びにするコンテナ */
+.allAcievement {
+    display: flex;
+    justify-content: center; /* 中央寄せ */
+    gap: 40px;              /* グループ間の溝 */
+    align-items: flex-start;
+    padding: 20px;
+}
+
+/* 各グループ（Short/Longのリスト） */
+.acievements {
+    display: flex;
+    flex-direction: column; /* 項目は縦に並べる */
+    gap: 12px;
+    flex: 1;               /* 幅を均等にする */
+    max-width: 500px;      /* 広がりすぎ防止 */
+}
+
+/* 各実績項目（1行）：ここを横並びにする */
+.acievement {
+    display: flex;
+    align-items: center;    /* 垂直中央 */
+    justify-content: space-between; /* 両端に広げる */
+    background: #ffffff;
+    padding: 12px 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+}
+
+/* 中の文字要素のスタイル調整 */
+.acievement p {
+    margin: 0 10px;
+    font-size: 0.9rem;
+    white-space: nowrap; /* 折り返し防止 */
+}
+
+/* 要素ごとの幅調整（ガタガタしないように） */
+.typeElm { width: 100px; text-align: left; font-weight: bold; }
+.levelElm { width: 60px; color: #666; }
+.difficultyElm { width: 70px; text-align: left; }
+.achStatus { width: 120px; text-align: right; margin: 0 !important; }
+
+/* =========================================
+   achievementView専用：親要素のスタイルを消去
+   ========================================= */
+
+/* Achievementページが表示されている時だけ、共通の白い枠(#toeic-word-book)を透明にする */
+body:has(.pageAchievement) #toeic-word-book {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    max-width: none !important; /* 中央の幅制限を解除 */
+    width: 95% !important;      /* 画面を広く使う */
+    padding: 0 !important;
+}
+
+/* ページ全体の背景を少し落ち着いた色に（任意） */
+body:has(.pageAchievement) {
+    background-color: #f4f7f9 !important;
+}
+
+/* リストの中身のカードは白背景を維持して読みやすくする */
+.pageAchievement .acievement {
+    background: white !important;
+    /* libraryViewのように少し透けさせたいなら以下 */
+    /* background: rgba(255, 255, 255, 0.9) !important; */
+}
+
+/* =========================================
+   explanationView専用：親要素のスタイルを完全に消去
+   ========================================= */
+
+/* このページが表示されている時だけ、共通の白い枠(#toeic-word-book)を無効化 */
+body:has(.pageExplanation) #toeic-word-book {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    max-width: none !important; 
+    width: 100% !important;     
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* ページ全体の背景設定 */
+body:has(.pageExplanation) {
+    background-color: #f8fbff !important;
+}
+
+/* メインコンテナ（すべて左詰め） */
+.pageExplanation {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: flex-start; /* 左寄せ */
+    padding: 60px 5%;          /* 画面端に余裕を持たせる */
+    box-sizing: border-box;
+}
+
+.explanation-container {
+    width: 100%;
+    max-width: 1400px; /* 超ワイドな最大幅 */
+    text-align: left;
+}
+
+/* タイトル */
+.explanation-title {
+    font-size: 3rem;
+    color: #2c3e50;
+    margin: 0 0 40px 0;
+    font-weight: 800;
+}
+
+/* セクションカード */
+.explanation-section {
+    width: 100%;
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border-left: 8px solid #4facfe; /* 左側にアクセントライン */
+    box-sizing: border-box;
+}
+
+/* 見出し */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.heading {
+    font-size: 1.6rem;
+    color: #34495e;
+    margin: 0;
+}
+
+/* 文章 */
+.explanationContent {
+    line-height: 2.0;
+    color: #444;
+    font-size: 1.1rem;
+    max-width: 1100px; /* 1行が長すぎないよう配慮 */
+}
+
+/* グリッドレイアウト */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.feature-item {
+    background: #f8fbff;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #e1e8f0;
+}
+
+.feature-item b {
+    display: block;
+    color: #4facfe;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+/* タイトルを左詰めに */
+.left-align-title {
+    font-size: 2.8rem;
+    color: #2c3e50;
+    margin: 0 0 40px 0;
+    font-weight: 800;
+    text-align: left;
+}
+
+/* セクションカード */
+.explanation-section {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 12px; /* 少し角を鋭くしてシャープに */
+    padding: 40px;
+    margin-bottom: 30px;
+    width: 100%;        /* 親の幅いっぱいに */
+    box-sizing: border-box;
+    border-left: 8px solid #4facfe; /* アクセントの左線 */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* 見出しの左寄せ */
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.heading {
+    font-size: 1.6rem;
+    color: #34495e;
+    border: none; /* 下線を消してシンプルに */
+}
+
+/* 文章の左詰めと幅制限（一行が長すぎると読みづらいため少し抑える） */
+.explanationContent {
+    line-height: 2.0;
+    color: #444;
+    font-size: 1.1rem;
+    max-width: 1200px; /* 文字が右端まで行き過ぎないよう制限 */
+}
+
+/* グリッドも左から配置 */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.feature-item {
+    background: #f8fbff;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #e1e8f0;
+    text-align: left; /* 念のため左詰め */
+}
+
+/* 戻るボタンも左寄せ */
+.button-area {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 40px;
+}
+
+    /* 2. ボタン自体の幅を調整 */
+    .optionBtn, 
+    .long-options-row,
+    .options li {
+        width: 100%;
+        max-width: 350px !important; /* 広がりすぎ防止 */
+        min-width: 0 !important;      /* 以前の min-width を解除 */
+        margin: 0 auto !important;
+        display: block !important;    /* inline-blockから変更 */
+    }
+
+    /* 3. 結果画面のリストアイテムのドットなどを消す */
+    .options li {
+        list-style: none !important;
+        text-align: center;
+    }
+
+/* =========================================
+   レスポンシブ設計：完全クリーン版
+   ========================================= */
+ @media screen and (max-width: 882px) {
+    .pageLibrary {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 20px;
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+    .pageLibrary .leftPage, 
+    .pageLibrary .rightPage {
+        width: 100% !important;
+        max-width: 600px;
+        min-width: 0 !important;
+    }
+    .changePageBtns {
+        flex-direction: row !important;
+        justify-content: center !important;
+        gap: 40px;
+        width: 100% !important;
+    }
+} 
+
+@media screen and (max-width: 768px) {
+    #toeic-word-book {
+        padding: 30px 15px !important;
+        width: 92% !important;
+    } 
+  
+    .options, 
+    .AllOptions,
+    .long-optionsAndAnswer,
+    .options-for-long {
+        display: flex !important;
+        flex-direction: column !important; 
+        align-items: center !important;
+        gap: 12px !important;
+    }
+    .optionBtn {
+        width: 100% !important;
+        max-width: 350px !important;
+    }
+} 
+
+ @media screen and (max-width: 400px) {
+    .setting-item {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 15px !important;
+    }
+    .settingOptionBtn {
+        width: 100% !important;
+    }
+} 
+
+@media (max-width: 753px) {
+    
+    .AllOptions {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 8px !important; 
+    }
+
+    
+    .long-options-row {
+        width: 100% !important; 
+        max-width: 350px;       
+        margin: 0 auto !important;
+    }
+}  
+ 
+/* --- クイズボタンの縦並び切り替え (869px以下) --- */
+@media screen and (max-width: 869px) {
+    .quiz .options {
+        flex-direction: column !important; /* 縦並びに変更 */
+        align-items: center !important;    /* 中央寄せ */
+        gap: 12px !important;              /* 縦の隙間を調整 */
+    }
+
+    .quiz .optionBtn {
+        width: 100% !important;           /* 横幅いっぱい */
+        max-width: 400px !important;      /* 広がりすぎないよう制限 */
+        margin-bottom: 0 !important;
+    }
+}
+
+/* --- 553px以下：テキストのモバイル最適化 --- */
+@media screen and (max-width: 553px) {
+    .instruction {
+        font-size: 1.1rem !important; /* 1.3remから縮小 */
+        margin-bottom: 25px !important; /* 隙間も少し詰めてコンパクトに */
+    }
+
+    .question-text {
+        font-size: 1.0rem !important; /* 1.4remから縮小 */
+        margin-bottom: 30px !important; /* 下の余白を調整 */
+        padding: 0 10px;               /* 画面端に文字がくっつかないよう余白追加 */
+    }
+}
+
+/* =========================================
+   レスポンシブ設計：完全クリーン版
+   ========================================= */
+ @media screen and (max-width: 882px) {
+    .pageLibrary {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 20px;
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+    .pageLibrary .leftPage, 
+    .pageLibrary .rightPage {
+        width: 100% !important;
+        max-width: 600px;
+        min-width: 0 !important;
+    }
+    .changePageBtns {
+        flex-direction: row !important;
+        justify-content: center !important;
+        gap: 40px;
+        width: 100% !important;
+    }
+} 
+
+@media screen and (max-width: 768px) {
+    #toeic-word-book {
+        padding: 30px 15px !important;
+        width: 92% !important;
+    } 
+  
+    .options, 
+    .AllOptions,
+    .long-optionsAndAnswer,
+    .options-for-long {
+        display: flex !important;
+        flex-direction: column !important; 
+        align-items: center !important;
+        gap: 12px !important;
+    }
+    .optionBtn {
+        width: 100% !important;
+        max-width: 350px !important;
+    }
+} 
+
+ @media screen and (max-width: 400px) {
+    .setting-item {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 15px !important;
+    }
+    .settingOptionBtn {
+        width: 100% !important;
+    }
+} 
+
+@media (max-width: 753px) {
+    
+    .AllOptions {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 8px !important; 
+    }
+
+    
+    .long-options-row {
+        width: 100% !important; 
+        max-width: 350px;       
+        margin: 0 auto !important;
+    }
+}  
+ 
+/* --- クイズボタンの縦並び切り替え (869px以下) --- */
+@media screen and (max-width: 869px) {
+    .quiz .options {
+        flex-direction: column !important; /* 縦並びに変更 */
+        align-items: center !important;    /* 中央寄せ */
+        gap: 12px !important;              /* 縦の隙間を調整 */
+    }
+
+    .quiz .optionBtn {
+        width: 100% !important;           /* 横幅いっぱい */
+        max-width: 400px !important;      /* 広がりすぎないよう制限 */
+        margin-bottom: 0 !important;
+    }
+}
+
+/* --- 869px以下：結果画面の選択肢の余白を詰める --- */
+@media screen and (max-width: 869px) {
+    /* 結果画面の選択肢（縦並び時） */
+    .results .options {
+        flex-direction: column !important;
+        gap: 5px !important;    /* 縦の隙間を最小限にする */
+        margin: 5px auto !important;
+    }
+
+    /* 選択肢1つ1つの要素に付いているマージンを完全に消す */
+    .results .options p,
+    .results .options li,
+    .results .options-for-long {
+        margin: 0 !important;   /* 👈 ここで縦のmarginをゼロにします */
+        padding: 4px 0 !important;
+    }
+
+    /* optionsのラベル（optionsという文字）の下の余白も微調整 */
+    .options-label {
+        margin-bottom: 5px !important;
+    }
+    
+    /* optionsを囲むエリア自体の下の余白も詰める */
+    .optionsPart {
+        margin-bottom: 10px !important;
+    }
+}
+
+/* --- 670px以下：長文クイズのテキスト調整 --- */
+@media screen and (max-width: 650px) {
+    .long-question-text {
+        font-size: 0.75rem !important; /* 元の1.4rem（または1.3rem）から縮小 */
+        line-height: 1.6 !important;   /* 行間を少し詰めて読みやすく */
+        margin-bottom: 30px !important; /* 下の余白を少し詰める */
+        text-align: left !important;    /* 長文の場合は左寄せの方が見やすい場合があります（お好みで） */
+        padding: 0 15px !important;    /* 左右の余白を確保 */
+    }
+}
+
+/* --- 670px以下：結果画面のテキスト最適化 --- */
+@media screen and (max-width: 670px) {
+    /* 和訳エリア */
+    .translation {
+        font-size: 0.8rem !important; /* 標準サイズに縮小 */
+        padding: 15px !important;    /* 余白を少し詰める */
+        line-height: 1.6 !important;
+    }
+
+    /* 解説エリア */
+    .explanation-highlight {
+        font-size: 0.8rem !important; /* 1.05remから縮小 */
+        padding: 15px !important;
+        line-height: 1.7 !important; /* 解説は少し行間を広げて読みやすく */
+    }
+
+    /* 「和訳」「解説」という見出しラベル */
+    .note {
+        font-size: 0.9rem !important;
+        margin-top: 20px !important;
+    }
+}
+
+/* --- Explanationページ専用レスポンシブ (869px以下) --- */
+@media screen and (max-width: 869px) {
+    .pageExplanation {
+        padding: 40px 20px !important; /* 余白を狭める */
+    }
+
+    .explanation-title {
+        font-size: 2.2rem !important; /* タイトルを少し小さく */
+        margin-bottom: 30px !important;
+        text-align: center !important; /* モバイルでは中央が見やすい */
+    }
+
+    .explanation-section {
+        padding: 25px 20px !important; /* カード内余白を調整 */
+        border-left-width: 5px !important; /* アクセント線を細く */
+    }
+
+    .heading {
+        font-size: 1.4rem !important;
+    }
+
+    /* グリッドを強制的に1列にする */
+    .feature-grid {
+        grid-template-columns: 1fr !important; 
+        gap: 15px !important;
+    }
+
+    .feature-item {
+        padding: 20px !important;
+    }
+
+    /* ボタンエリアを中央寄せに */
+    .button-area {
+        justify-content: center !important;
+    }
+
+    .backBtn {
+        width: 100% !important;
+        max-width: 300px !important;
+    }
+}
+
+/* --- 553px以下：さらにコンパクトに --- */
+@media screen and (max-width: 553px) {
+    .explanation-title {
+        font-size: 1.8rem !important;
+    }
+
+    .explanationContent {
+        font-size: 1rem !important; /* 文章を標準サイズに */
+        line-height: 1.8 !important;
+    }
+
+    .heading {
+        font-size: 1.25rem !important;
+    }
+    
+    .icon {
+        font-size: 1.2rem !important;
+    }
+}
+
+/* --- 実績画面：869px以下（2カラムを1カラムへ） --- */
+@media screen and (max-width: 869px) {
+    /* ShortとLongのグループを縦に並べる */
+    .allAcievement {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 30px !important;
+        padding: 10px !important;
+    }
+
+    .acievements {
+        width: 100% !important;
+        max-width: 500px !important;
+    }
+
+    /* 各実績項目（1行）を少しコンパクトに */
+    .acievement {
+        padding: 10px !important;
+        font-size: 0.8rem;
+    }
+
+    .acievement p {
+        margin: 0 5px !important;
+    }
+
+    .explanationContent p {
+        font-size: 0.8rem;
+    }
+}
+
+/* --- 実績画面：553px以下（行内の要素を整理） --- */
+@media screen and (max-width: 553px) {
+    /* 画面がかなり狭い場合、タイプ名（Short/Long Sentences）を非表示にするか
+       アイコン化してスペースを確保する（ここでは非表示にしてスッキリさせます） */
+    .typeElm {
+        display: none !important;
+    }
+
+    .acievement {
+        justify-content: space-between !important;
+    }
+
+    /* 各要素の幅を自動調整にして詰める */
+    .levelElm { width: auto !important; }
+    .difficultyElm { width: auto !important; }
+    .achStatus { width: auto !important; }
+
+    /* クリア状況の文字を小さくして収める */
+    .achStatus {
+        font-size: 0.8rem !important;
+    }
+    
+    h1 { font-size: 1.8rem !important; }
+    h2 { font-size: 1.4rem !important; }
+}
+
+/* --- 381px以下：開始画面タイトルの縦並び --- */
+@media screen and (max-width: 381px) {
+    .start-title {
+        display: flex !important;
+        flex-direction: column !important; /* 縦並びに強制 */
+        align-items: center !important;
+        gap: 8px !important;              /* 行間の隙間 */
+        font-size: 1.5rem !important;      /* 全体のサイズを少し微調整 */
+    }
+
+    .type-text {
+        font-size: 1.4rem !important;
+    }
+
+    .level-text {
+        font-size: 1.2rem !important;      /* Levelの方は少し小さくするとバランスが良い */
+        color: var(--primary-color);       /* Levelにアクセント色をつけるのもおすすめ */
+    }
+}
+
+/* --- Library画面：442px以下 --- */
+@media screen and (max-width: 442px) {
+    /* 単語と意味のエリアを縦並び ＋ 中央寄せ */
+    .match {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important; /* 左寄せ(flex-start)から中央(center)に変更 */
+        text-align: center !important;  /* テキスト自体を中央に */
+        gap: 6px !important;
+        margin-bottom: 10px !important;
+        width: 100% !important;
+    }
+
+    .english {
+        font-size: 1.2rem !important;
+        margin: 0 !important;
+        width: 100% !important;        /* 幅いっぱいで中央揃えを確実にする */
+        text-align: center !important;
+    }
+
+    .japanese {
+        font-size: 0.7rem !important;
+        margin: 0 !important;
+        width: 100% !important;
+        text-align: center !important;
+    }
+
+    /* 例文エリアも中央寄せにする場合（お好みで） */
+    .exampleSentence {
+        text-align: center !important;
+    }
+
+    .englishES, .japaneseES {
+        font-size: 0.8rem !important;
+        width: 100% !important;
+    }
+}

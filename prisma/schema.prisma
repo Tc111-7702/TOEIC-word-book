@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//全単語集
+model Words {
+  id Int @default(autoincrement()) @id
+  level Int
+  english String
+  japanese String[]
+  partOfSpeech String
+  englishExampleSentence String
+  japaneseExampleSentence String
+}
+
+//全短文問題
+model ShortQuestions {
+  id Int @default(autoincrement()) @id
+  level Int
+  englishSentence String
+  japaneseSentence String
+  answer String
+  explanation String
+}
+
+//全長文問題
+model LongQuestions {
+  id Int @default(autoincrement()) @id
+  level Int
+  englishText String
+  japaneseText String
+  answers String[]
+  explanation String
+}
+
+
+//ユーザーデータとリレイションしているテーブル
+//短文の復習用問題
+model ShortQuestionsReview {
+  id Int @default(autoincrement()) @id
+  userId Int
+  user User @relation(fields: [userId], references: [id]) 
+  level Int
+  englishSentence String
+  japaneseSentence String
+  answer String
+  explanation String
+}
+
+//長文の復習用問題
+model LongQuestionsReview {
+  id Int @default(autoincrement()) @id
+  userId Int
+  user User @relation(fields: [userId], references: [id]) 
+  level Int
+  englishText String
+  japaneseText String
+  answers String[]
+  explanation String
+}
+
+//プレイヤーデータ
+model PlayerData {
+  id Int @default(autoincrement()) @id
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  type String 
+  level Int
+  difficulty String
+  cleared Boolean @default(false)
+}
+
+
+//ユーザデータ
+model User {
+  id Int @default(autoincrement()) @id
+  name String
+  email String @unique
+  hashedPassword String
+  shortQuestionsReview ShortQuestionsReview[]
+  longQuestionsReview LongQuestionsReview[]
+  playerData PlayerData[]
+}
+
+
