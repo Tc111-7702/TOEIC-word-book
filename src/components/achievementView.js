@@ -2,7 +2,6 @@ import { replaceView } from "../utils/replaceView.js";
 
 //成績画面
 export const achievementView = (app) => {
-    parentElm.classList.add("pageAchievement");
     //定数
     const maxlevel = 4;
     const maxDifficulty = 3;
@@ -72,6 +71,7 @@ export const achievementView = (app) => {
 
     //DOMの生成
     const parentElm = document.createElement("div");
+    parentElm.classList.add("pageAchievement");
     const html = `
         <div class="achievement-page">
             <h1>Achievement</h1>
