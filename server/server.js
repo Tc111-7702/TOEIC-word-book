@@ -5,6 +5,8 @@ import router from "./routes/router.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
+//express
+const app = express();
 // ESモジュールでパスを扱うための設定
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,7 +18,6 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "src", "index.html"));
 });
 
-const app = express();
 //Cookieの解析
 app.use(cookieParser());
 //CORSの設定
