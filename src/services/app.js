@@ -2,7 +2,7 @@
 export const checkAuthStatus = async (app) => {
     try {
         //認証確認のリクエスト
-        const res = await fetch("http://localhost:3000/verify", {
+        const res = await fetch("/verify", {
             method: "GET",
             credentials: "include" 
         });

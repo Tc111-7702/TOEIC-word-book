@@ -9,7 +9,7 @@ export const fetchQuiz = async (app) => {
             //Practiceの場合
             if (type === "Short") {
                 //クイズ問題の取得のリクエスト
-                const res = await fetch(`http://localhost:3000/Short/${level}`);
+                const res = await fetch(`/Short/${level}`);
                 //クラス変数を更新
                 app.quizState.quizs = await res.json();
                 app.quizState.quizLength = app.quizState.quizs.length;
@@ -17,7 +17,7 @@ export const fetchQuiz = async (app) => {
                 app.quizStartView();
             } else {
                 //クイズ問題の取得のリクエスト
-                const res = await fetch(`http://localhost:3000/Long/${level}`);
+                const res = await fetch(`/Long/${level}`);
                 //クラス変数を更新
                 app.quizState.quizs = await res.json();
                 app.quizState.quizLength = app.quizState.quizs.length;
@@ -28,7 +28,7 @@ export const fetchQuiz = async (app) => {
             //Reviewの場合
             if (type === "Short") {
                 //クイズ問題の取得のリクエスト
-                const res = await fetch(`http://localhost:3000/Short/0`);
+                const res = await fetch(`/Short/0`);
                 if (!res.ok) {
                     //レスポンスがエラーの場合
                     alert("復習用の問題数が足りません");
@@ -41,7 +41,7 @@ export const fetchQuiz = async (app) => {
                 }
             } else {
                 //クイズ問題の取得のリクエスト
-                const res = await fetch(`http://localhost:3000/Long/0`);
+                const res = await fetch(`/Long/0`);
                 if (!res.ok) {
                     //レスポンスがエラーの場合
                     alert("復習用の問題数が足りません");

@@ -6,7 +6,7 @@ export const signUp = async (data, app) => {
     const passwordErrElm = app.rootElm.querySelector(".password-error"); 
     nameErrElm.textContent = "";
     //新規登録をリクエスト
-    const res = await fetch("http://localhost:3000/sign-up", {
+    const res = await fetch("/sign-up", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

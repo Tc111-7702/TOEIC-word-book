@@ -2,7 +2,7 @@
 export const fetchWord = async (app) => {
     try {
         //全単語の取得のリクエスト
-        const res = await fetch("http://localhost:3000/allWords");
+        const res = await fetch("/allWords");
         //クラス変数を更新
         app.wordData = await res.json();
     } catch (err) {

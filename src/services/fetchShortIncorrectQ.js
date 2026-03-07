@@ -13,7 +13,7 @@ export const fetchShortIncorrectQ = async (data, mode) => {
     //復習用の短文問題の追加、削除のリクエスト
     const { userId, level, englishSentence, japaneseSentence, answer, explanation }
         = data;
-    const res = await fetch(`http://localhost:3000/${changeEndpoint}IncorrectShort`, {
+    const res = await fetch(`/${changeEndpoint}IncorrectShort`, {
         method: reqMethod,
         headers: {
             "Content-Type": "application/json"

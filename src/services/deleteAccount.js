@@ -5,7 +5,7 @@ export const deleteAccount = async (data, app) => {
     const passwordErrElm = app.rootElm.querySelector(".password-error");
     //アカウント削除のリクエスト
     const { userId, email, password } = data;
-    const res = await fetch("http://localhost:3000/deleteAccount", {
+    const res = await fetch("/deleteAccount", {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json" 

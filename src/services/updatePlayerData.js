@@ -2,7 +2,7 @@
 export const updatePlayerData = async (data) => {
     //ユーザーデータの更新をリクエスト
     const { userId, type, level, difficulty } = data;
-    const res = await fetch(`http://localhost:3000/updatePlayerData`, {
+    const res = await fetch(`/updatePlayerData`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

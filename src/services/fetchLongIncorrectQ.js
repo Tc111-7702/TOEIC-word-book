@@ -13,7 +13,7 @@ export const fetchLongIncorrectQ = async (data, mode) => {
     //復習用の長文問題の追加、削除のリクエスト
     const { userId, level, englishText, japaneseText, answers, explanation }
         = data;
-    const res = await fetch(`http://localhost:3000/${changeEndpoint}IncorrectLong`, {
+    const res = await fetch(`/${changeEndpoint}IncorrectLong`, {
         method: reqMethod,
         headers: {
             "Content-Type": "application/json"

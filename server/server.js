@@ -8,9 +8,11 @@ const app = express();
 app.use(cookieParser());
 //CORSの設定
 app.use(cors({
-    origin: "http://localhost:5500",
+    origin: process.env.FRONTEND_URL || "http://localhost:5500",
     credentials: true
 }));
+//srcの読み込み
+app.use(express.static("src"));
 //JSONデータの解析
 app.use(express.json()); 
 //ルーティング設定

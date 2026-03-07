@@ -2,7 +2,7 @@
 export const logout = async (app) => {
     try {
         //ログアウトをリクエスト
-        const res = await fetch("http://localhost:3000/logout", {
+        const res = await fetch("/logout", {
             method: "POST", 
             credentials: "include" 
         });

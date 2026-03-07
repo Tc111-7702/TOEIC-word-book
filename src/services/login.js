@@ -4,7 +4,7 @@ export const login = async (data, app) => {
     const emailErrElm = app.rootElm.querySelector(".email-error");
     const passwordErrElm = app.rootElm.querySelector(".password-error"); 
     //ログインのリクエスト
-    const res = await fetch("http://localhost:3000/login", {
+    const res = await fetch("/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
