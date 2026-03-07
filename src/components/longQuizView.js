@@ -19,7 +19,7 @@ export const longQuizView = (app) => {
         for (let j = 0; j < options.length; j++) {
             //[1']にDOMを格納(同じ空欄のオプションのボタンを共通化させるデータ属性を振っている)
             optionsStrs.push(`
-                    <button class="long-options-row" data-longOp="${i}">
+                    <button class="long-options-row" data-longop="${i}">
                         ${options[j].english}
                     </button>
                 `);
@@ -62,7 +62,7 @@ export const longQuizView = (app) => {
     //DOM要素の取得
     const timerElm = parentElm.querySelector(".timer");
     const instructionElm = parentElm.querySelector(".instruction");
-    const allOptionsBtnsElm = parentElm.querySelectorAll("[data-longOp]");
+    const allOptionsBtnsElm = parentElm.querySelectorAll("[data-longop]");
     const answerBtnElm = parentElm.querySelector(".answerBtn");
 
     //残時間の警告演出
@@ -77,7 +77,7 @@ export const longQuizView = (app) => {
     for (let i = 0; i < correctsAndOptionsArr.length; i++) {
         //データ属性で同じの空欄のオプションボタンを一気に取得する
         const I = String(i);
-        const optionsBtnsElm = [...allOptionsBtnsElm].filter(btn => btn.dataset.longOp === I);
+        const optionsBtnsElm = [...allOptionsBtnsElm].filter(btn => btn.dataset.longop === I);
 
         //空欄を共有するオプションボタンにイベントリスナを発火
         for (let j = 0; j < optionsBtnsElm.length; j++) {    
