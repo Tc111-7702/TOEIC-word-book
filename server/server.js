@@ -12,10 +12,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // 静的ファイルの読み込み設定（srcフォルダを指定）
-app.use(express.static(path.join(__dirname, "src")));
+app.use(express.static(path.join(__dirname, "../src")));
 // 2. ルート（/）にアクセスしたときに index.html を強制的に表示する
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "src", "index.html"));
+  res.sendFile(path.join(__dirname, "../src", "index.html"));
 });
 
 //Cookieの解析
