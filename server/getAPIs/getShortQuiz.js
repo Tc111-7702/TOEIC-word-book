@@ -9,7 +9,7 @@ export const getShortQuiz = async (req, res) => {
   try {
     const quizs = [];
     //問題数
-    const QUESTION_COUNT = 20;
+    const QUESTION_COUNT = 2;
     //選択肢数
     const OPTION_COUNT = 4;
     const level = Number(req.params.id);

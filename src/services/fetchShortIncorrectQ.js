@@ -1,6 +1,5 @@
 //復習用の短文問題の追加、削除
 export const fetchShortIncorrectQ = async (data, mode) => {
-    console.log("送信されるデータ:", data);
     //ゲームモードに応じてリクエストメソッドを変更
     let changeEndpoint;
     let reqMethod;
