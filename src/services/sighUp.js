@@ -37,6 +37,7 @@ export const signUp = async (data, app) => {
     //新規登録成功
     if (result.message === "新規登録成功") {
         //クラス変数の更新
+        app.userId = result.userId;
         await app.fetchPlayerData(result.userId);
         app.makeClearedData(app.playerData);
         //トップ画面に遷移

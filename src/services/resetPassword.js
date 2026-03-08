@@ -34,6 +34,7 @@ export const resetPassword = async (data, app) => {
     //パスワード再設定成功
     if (result.message === "パスワードの再設定完了") {
         //クラス変数の更新
+        app.userId = result.userId;
         await app.fetchPlayerData(result.userId);
         app.makeClearedData(app.playerData);
         //トップ画面に遷移

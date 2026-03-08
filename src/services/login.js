@@ -30,6 +30,7 @@ export const login = async (data, app) => {
     //ログイン成功
     if (result.message === "ログイン成功") {
         await app.fetchPlayerData(result.userId);
+        app.userId = result.userId;
         app.makeClearedData(app.playerData);
         app.topView();
     }
